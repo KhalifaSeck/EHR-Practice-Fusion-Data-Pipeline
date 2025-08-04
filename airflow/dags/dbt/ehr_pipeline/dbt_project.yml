@@ -1,0 +1,33 @@
+name: 'ehr_pipeline'
+version: '1.0.0'
+
+profile: 'ehr_pipeline'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  ehr_pipeline:
+    # dossier models/staging → views dans le schéma STAGING
+    staging:
+      +schema: staging
+      +materialized: view
+
+    # dossier models/marts → tables dans le schéma MARTS
+    marts:
+      +schema: marts
+      +materialized: table
+
+      # si tu as des sous-dossiers dim/ fact/, tu peux les déclarer aussi
+      dim:
+        +schema: marts
+      fact:
+        +schema: marts

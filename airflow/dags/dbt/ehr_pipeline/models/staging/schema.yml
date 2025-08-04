@@ -1,0 +1,250 @@
+version: 2
+
+sources:
+  - name: RAW
+    database: EHR_PIPELINE
+    schema: RAW
+    tables:
+      - name: ALLERGY
+      - name: CONDITION
+      - name: DIAGNOSIS
+      - name: IMMUNIZATION
+      - name: LAB_OBSERVATION
+      - name: LAB_PANEL
+      - name: LAB_RESULT
+      - name: MEDICATION
+      - name: PATIENT
+      - name: PATIENT_CONDITION
+      - name: PATIENT_SMOKING_STATUS
+      - name: PRESCRIPTION
+      - name: SMOKING_STATUS
+      - name: TRANSCRIPT
+      - name: TRANSCRIPT_ALLERGY
+      - name: TRANSCRIPT_DIAGNOSIS
+
+models:
+  - name: stg_patient
+    description: "Données des patients standardisées depuis la table RAW.PATIENT"
+    columns:
+      - name: patient_id
+        description: "Identifiant unique du patient"
+      - name: gender
+        description: "Sexe du patient"
+      - name: practice_id
+        description: "Identifiant du cabinet médical"
+      - name: state
+        description: "État ou province de résidence"
+      - name: year_of_birth
+        description: "Année de naissance du patient"
+
+  - name: stg_allergy
+    description: "Données des allergies standardisées depuis la table RAW.ALLERGY"
+    columns:
+      - name: allergy_id
+        description: "Identifiant unique de l'allergie"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: allergy_type
+        description: "Type d'allergie"
+      - name: medication_name
+        description: "Nom du médicament"
+      - name: ndc_code
+        description: "Code NDC du médicament"
+      - name: reaction
+        description: "Réaction allergique"
+      - name: severity
+        description: "Sévérité de l'allergie"
+      - name: start_year
+        description: "Année de début"
+      - name: user_id
+        description: "Identifiant de l'utilisateur"
+
+  - name: stg_diagnosis
+    description: "Données des diagnostics standardisées depuis la table RAW.DIAGNOSIS"
+    columns:
+      - name: diagnosis_id
+        description: "Identifiant unique du diagnostic"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: diagnosis_code
+        description: "Code du diagnostic"
+      - name: diagnosis_description
+        description: "Description du diagnostic"
+      - name: diagnosis_start_year
+        description: "Année de début du diagnostic"
+      - name: diagnosis_end_year
+        description: "Année de fin du diagnostic"
+      - name: is_acute
+        description: "Diagnostic aigu"
+      - name: user_id
+        description: "Identifiant de l'utilisateur"
+
+  - name: stg_lab_observation
+    description: "Observations de laboratoire standardisées depuis RAW.LAB_OBSERVATION"
+    columns:
+      - name: lab_observation_id
+        description: "Identifiant unique de l'observation"
+      - name: lab_panel_id
+        description: "Identifiant du panel de laboratoire"
+      - name: hl7_id
+        description: "Identifiant HL7"
+      - name: hl7_text
+        description: "Texte HL7"
+      - name: hl7_code_system
+        description: "Système de codage HL7"
+      - name: is_loinc
+        description: "Indique si le code est LOINC"
+      - name: value
+        description: "Valeur observée"
+      - name: is_valid
+        description: "Valeur valide"
+      - name: abnormal_flag
+        description: "Indicateur d'anomalie"
+      - name: is_abnormal
+        description: "Valeur anormale"
+      - name: method
+        description: "Méthode d'observation"
+      - name: observation_year
+        description: "Année de l'observation"
+
+  - name: stg_lab_panel
+    description: "Panels de laboratoire standardisées depuis RAW.LAB_PANEL"
+    columns:
+      - name: lab_panel_id
+        description: "Identifiant du panel"
+      - name: lab_result_id
+        description: "Identifiant du résultat de laboratoire"
+      - name: panel_name
+        description: "Nom du panel"
+      - name: observation_year
+        description: "Année d'observation"
+      - name: danger_code
+        description: "Code de danger"
+      - name: sequence
+        description: "Séquence"
+      - name: status
+        description: "Statut du panel"
+
+  - name: stg_lab_result
+    description: "Résultats de laboratoire standardisées depuis RAW.LAB_RESULT"
+    columns:
+      - name: lab_result_id
+        description: "Identifiant du résultat"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: practice_id
+        description: "Identifiant du cabinet médical"
+      - name: facility_id
+        description: "Identifiant de l'établissement"
+      - name: transcript_id
+        description: "Identifiant du transcript"
+      - name: report_year
+        description: "Année du rapport"
+      - name: parent_result_id
+        description: "Identifiant du résultat parent"
+      - name: user_id
+        description: "Identifiant de l'utilisateur"
+
+  - name: stg_patient_condition
+    description: "Conditions du patient standardisées depuis RAW.PATIENT_CONDITION"
+    columns:
+      - name: patient_condition_id
+        description: "Identifiant unique de la condition du patient"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: condition_id
+        description: "Identifiant de la condition"
+      - name: created_year
+        description: "Année de création"
+
+  - name: stg_prescription
+    description: "Prescriptions standardisées depuis RAW.PRESCRIPTION"
+    columns:
+      - name: prescription_id
+        description: "Identifiant unique de la prescription"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: medication_id
+        description: "Identifiant du médicament"
+      - name: quantity
+        description: "Quantité prescrite"
+      - name: prescription_year
+        description: "Année de la prescription"
+      - name: refills
+        description: "Nombre de renouvellements"
+      - name: refill_as_needed
+        description: "Renouvellement si besoin"
+      - name: is_generic_allowed
+        description: "Générique autorisé"
+      - name: user_id
+        description: "Identifiant de l'utilisateur"
+
+  - name: stg_transcript
+    description: "Transcripts standardisées depuis RAW.TRANSCRIPT"
+    columns:
+      - name: transcript_id
+        description: "Identifiant unique du transcript"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: visit_year
+        description: "Année de la visite"
+      - name: bmi
+        description: "Indice de masse corporelle"
+      - name: height
+        description: "Taille du patient"
+      - name: systolic_bp
+        description: "Pression artérielle systolique"
+      - name: diastolic_bp
+        description: "Pression artérielle diastolique"
+      - name: heart_rate
+        description: "Fréquence cardiaque"
+      - name: respiratory_rate
+        description: "Fréquence respiratoire"
+      - name: temperature
+        description: "Température corporelle"
+      - name: physician_specialty
+        description: "Spécialité du médecin"
+      - name: user_id
+        description: "Identifiant de l'utilisateur"
+
+  - name: stg_medication
+    description: "Données des médicaments standardisées depuis RAW.MEDICATION"
+    columns:
+      - name: medication_id
+        description: "Identifiant du médicament"
+      - name: medication_name
+        description: "Nom du médicament"
+      - name: ndc_code
+        description: "Code NDC"
+
+  - name: stg_immunization
+    description: "Données des immunisations standardisées depuis RAW.IMMUNIZATION"
+    columns:
+      - name: immunization_id
+        description: "Identifiant du vaccin"
+      - name: vaccine_name
+        description: "Nom du vaccin"
+      - name: cvx_code
+        description: "Code CVX"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: administered_year
+        description: "Année d'administration"
+
+  - name: stg_smoking_status
+    description: "Données du statut tabagique standardisées depuis RAW.SMOKING_STATUS"
+    columns:
+      - name: smoking_status_id
+        description: "Identifiant du statut tabagique"
+      - name: description
+        description: "Description du statut"
+      - name: nist_code
+        description: "Code NIST"
+
+  - name: stg_practice
+    description: "Données des cabinets médicaux standardisées depuis RAW.PRACTICE"
+    columns:
+      - name: practice_id
+        description: "Identifiant du cabinet"
+      - name: state
+        description: "État ou province"

@@ -1,0 +1,18 @@
+# Exécuter d'abord en ligne de commande
+notepad "$env:USERPROFILE\.snowsql\config"
+# Ajouter les éléments 
+
+[connections.ehr_pipeline]
+accountname = ""      # A ajouter
+username = ""         # A ajouter
+password = ""         # A ajouter
+warehousename = ""    # A ajouter
+dbname = ""           # A ajouter
+schemaname = ""       # A ajouter
+rolename =""          # A ajouter
+
+# Création des tables vers RAW avec SnowSQL : 
+snowsql -c ehr_pipeline -f ingestion/create_raw_tables.sql
+
+# Ingestion ou chargement des données brutes avec python : 
+python ehr_pipeline\ingestion\load_to_raw.py

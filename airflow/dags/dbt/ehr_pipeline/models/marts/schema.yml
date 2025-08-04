@@ -1,0 +1,201 @@
+version: 2.0
+models:
+  - name: dim_patient
+    description: "Profil démographique du patient"
+    columns:
+      - name: patient_id
+        description: "Identifiant unique du patient"
+      - name: gender
+        description: "Sexe du patient"
+      - name: year_of_birth
+        description: "Année de naissance"
+      - name: state
+        description: "État ou province"
+      - name: practice_id
+        description: "Identifiant du cabinet médical"
+
+  - name: dim_practice
+    description: "Cabinet médical et couverture géographique"
+    columns:
+      - name: practice_id
+        description: "Identifiant du cabinet"
+      - name: state
+        description: "État ou province"
+      - name: city
+        description: "Ville"
+
+  - name: dim_diagnosis
+    description: "Dictionnaire des diagnostics"
+    columns:
+      - name: diagnosis_id
+        description: "Identifiant du diagnostic"
+      - name: diagnosis_code
+        description: "Code ICD-9"
+      - name: diagnosis_description
+        description: "Description"
+      - name: is_acute
+        description: "Aigu (true/false)"
+
+  - name: dim_medication
+    description: "Dictionnaire des médicaments"
+    columns:
+      - name: medication_id
+        description: "Identifiant du médicament"
+      - name: medication_name
+        description: "Nom du médicament"
+      - name: ndc_code
+        description: "Code NDC"
+
+  - name: dim_allergy
+    description: "Dictionnaire des allergies"
+    columns:
+      - name: allergy_id
+        description: "Identifiant de l'allergie"
+      - name: allergy_type
+        description: "Type d'allergie"
+      - name: severity
+        description: "Sévérité"
+      - name: reaction
+        description: "Réaction"
+
+  - name: dim_lab_test
+    description: "Dictionnaire des tests de laboratoire"
+    columns:
+      - name: lab_observation_id
+        description: "Identifiant du test"
+      - name: hl7_id
+        description: "Identifiant HL7"
+      - name: hl7_text
+        description: "Nom du test"
+      - name: units
+        description: "Unité de mesure"
+
+  - name: dim_smoking_status
+    description: "Statut tabagique"
+    columns:
+      - name: smoking_status_id
+        description: "Identifiant du statut"
+      - name: description
+        description: "Description"
+      - name: nist_code
+        description: "Code NIST"
+
+  - name: dim_vaccine
+    description: "Dictionnaire des vaccins"
+    columns:
+      - name: immunization_id
+        description: "Identifiant du vaccin"
+      - name: vaccine_name
+        description: "Nom du vaccin"
+      - name: cvx_code
+        description: "Code CVX"
+
+# Facts
+  - name: fct_patient_diagnosis
+    description: "Historique des diagnostics par patient"
+    columns:
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: diagnosis_id
+        description: "Identifiant du diagnostic"
+      - name: diagnosis_start_year
+        description: "Année de début"
+      - name: diagnosis_end_year
+        description: "Année de fin"
+      - name: is_acute
+        description: "Aigu (true/false)"
+
+  - name: fct_prescription
+    description: "Prescriptions et traitements"
+    columns:
+      - name: prescription_id
+        description: "Identifiant de la prescription"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: diagnosis_id
+        description: "Diagnostic associé"
+      - name: medication_id
+        description: "Médicament prescrit"
+      - name: prescription_year
+        description: "Année"
+      - name: quantity
+        description: "Quantité"
+      - name: refills
+        description: "Nombre de renouvellements"
+      - name: is_generic_allowed
+        description: "Générique autorisé"
+
+  - name: fct_allergy_patient
+    description: "Allergies déclarées par patient"
+    columns:
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: allergy_id
+        description: "Identifiant de l'allergie"
+      - name: severity
+        description: "Sévérité"
+      - name: start_year
+        description: "Année de début"
+
+  - name: fct_lab_result
+    description: "Résultats de laboratoire par patient"
+    columns:
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: lab_observation_id
+        description: "Test de laboratoire"
+      - name: observation_year
+        description: "Année"
+      - name: value
+        description: "Valeur mesurée"
+      - name: abnormal_flag
+        description: "Indicateur d'anomalie"
+      - name: is_abnormal
+        description: "Valeur hors norme"
+      - name: panic_flag
+        description: "Panic High/Low"
+
+  - name: fct_smoking_status
+    description: "Statut tabagique par patient"
+    columns:
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: smoking_status_id
+        description: "Statut tabagique"
+      - name: effective_year
+        description: "Année d'effet"
+
+  - name: fct_immunization
+    description: "Vaccinations par patient"
+    columns:
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: immunization_id
+        description: "Vaccin administré"
+      - name: administered_year
+        description: "Année d'administration"
+
+  - name: fct_transcript
+    description: "Visites cliniques et indicateurs vitaux"
+    columns:
+      - name: transcript_id
+        description: "Identifiant de la visite"
+      - name: patient_id
+        description: "Identifiant du patient"
+      - name: visit_year
+        description: "Année de la visite"
+      - name: bmi
+        description: "Indice de masse corporelle"
+      - name: systolic_bp
+        description: "Tension systolique"
+      - name: diastolic_bp
+        description: "Tension diastolique"
+      - name: heart_rate
+        description: "Fréquence cardiaque"
+      - name: respiratory_rate
+        description: "Fréquence respiratoire"
+      - name: temperature
+        description: "Température"
+      - name: physician_specialty
+        description: "Spécialité du médecin"
+

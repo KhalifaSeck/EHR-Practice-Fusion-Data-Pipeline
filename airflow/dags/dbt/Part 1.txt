@@ -1,0 +1,144 @@
+Voici un fichier `README.md` clair, structuré et professionnel, résumant tout ce que tu as mis en place jusqu'à l'ingestion des données brutes EHR dans Snowflake :
+
+---
+
+```markdown
+# 📦 EHR Data Pipeline – Ingestion vers Snowflake (RAW Layer)
+
+Ce projet de Data Engineering vise à créer un pipeline analytique autour de données médicales (EHR – Electronic Health Records). Cette première étape décrit le chargement des données brutes depuis des fichiers CSV locaux vers Snowflake dans un schéma RAW.
+
+---
+
+## 🏗️ Structure du projet
+
+```
+
+ehr\_pipeline/
+├── data/                            # Fichiers CSV sources (EHR)
+│   ├── training\_SyncAllergy.csv
+│   ├── training\_SyncDiagnosis.csv
+│   └── ...
+├── ingestion/
+│   └── ingest\_raw\_data.sql         # Script SQL d'ingestion complet
+├── dbt/                            # À venir : Transformation avec dbt
+│   └── ehr\_pipeline/
+│       └── models/
+└── README.md
+
+````
+
+---
+
+## 🧰 Outils utilisés
+
+- **Snowflake** : entrepôt de données cloud (stockage + calcul)
+- **SnowSQL** : client en ligne de commande pour interagir avec Snowflake
+- **CSV** : fichiers source stockés localement
+- **SQL** : script complet d'automatisation
+
+---
+
+## 🚀 Étapes de l'ingestion
+
+### 1. 🔧 Configuration initiale
+
+- Base : `ehr_pipeline`
+- Schéma : `RAW`
+- Rôle : `ACCOUNTADMIN` (ou autre avec privilèges suffisants)
+
+```sql
+USE ROLE ACCOUNTADMIN;
+USE DATABASE ehr_pipeline;
+USE SCHEMA RAW;
+````
+
+---
+
+### 2. 🗃️ Création du stage
+
+Création d’un stage nommé `ehr_stage` avec configuration adaptée aux fichiers CSV (délimiteurs, en-têtes, valeurs NULL, etc.)
+
+```sql
+CREATE OR REPLACE STAGE ehr_stage 
+FILE_FORMAT = (
+    TYPE = CSV 
+    FIELD_DELIMITER = ','
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    SKIP_HEADER = 1
+    TRIM_SPACE = TRUE
+    NULL_IF = ('NULL', 'null', '', 'N/A')
+    EMPTY_FIELD_AS_NULL = TRUE
+    ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE
+);
+```
+
+---
+
+### 3. 📤 Upload des fichiers locaux (PUT)
+
+À exécuter depuis le terminal **SnowSQL**, cette étape charge les fichiers CSV vers le stage Snowflake :
+
+```sql
+PUT file://ehr_pipeline/data/training_SyncAllergy.csv @ehr_stage AUTO_COMPRESS=FALSE;
+-- Répété pour les 16 fichiers
+```
+
+---
+
+### 4. 📥 Chargement dans les tables RAW
+
+Chaque fichier est copié vers sa table cible avec gestion des erreurs :
+
+```sql
+COPY INTO RAW.ALLERGY 
+FROM @ehr_stage/training_SyncAllergy.csv 
+ON_ERROR = CONTINUE;
+-- Répété pour chaque fichier
+```
+
+---
+
+### 5. 📊 Vérification du chargement
+
+Requête finale pour valider le nombre de lignes chargées :
+
+```sql
+SELECT 
+    table_name,
+    row_count,
+    CASE 
+        WHEN row_count = 0 THEN '⚠️  EMPTY'
+        WHEN row_count > 0 THEN '✅ LOADED'
+    END AS status
+FROM (
+    SELECT 'ALLERGY', COUNT(*) FROM RAW.ALLERGY UNION ALL
+    ...
+);
+```
+
+---
+
+## ✅ Résultat attendu
+
+À la fin de l'ingestion, toutes les données brutes seront disponibles dans le schéma `RAW` de la base `ehr_pipeline`, prêtes à être transformées via **dbt** (`stg_`, `dim_`, `fact_`).
+
+---
+
+## 🔜 Prochaine étape
+
+Créer les modèles de **staging (`stg_`)** dans dbt à partir des tables RAW pour amorcer la couche de transformation.
+
+---
+
+## 👨‍💻 Auteur
+
+Khalifa Ababacar Seck
+Projet académique – Master en Informatique (Data Engineering)
+Université de Sherbrooke, 2025
+
+```
+
+---
+
+Souhaites-tu que je génère aussi le `README.md` pour les étapes dbt à venir (staging, marts, facts, etc.) ?
+```
